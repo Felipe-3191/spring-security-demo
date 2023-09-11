@@ -5,6 +5,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -23,35 +26,25 @@ public class ProjectSecurityConfig {
 
     }
 
-    /** if i want to deny every request returning 403 (first i have to auth then gonna deny)
-     * @Bean
-     *     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-     *
-     *         http.authorizeHttpRequests(requests ->
-     *                         requests.anyRequest.denyAll()
-     *
-     *                         )
-     *                 .formLogin(Customizer.withDefaults())
-     *                 .httpBasic(Customizer.withDefaults());
-     *         return http.build();
-     *
-     *     }
-     */
 
-    /** if i want to permit every request
-     * @Bean
-     *     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-     *
-     *         http.authorizeHttpRequests(requests ->
-     *                         requests.anyRequest.permitAll()
-     *
-     *                         )
-     *                 .formLogin(Customizer.withDefaults())
-     *                 .httpBasic(Customizer.withDefaults());
-     *         return http.build();
-     *
-     *     }
-     */
+    @Bean
+    public InMemoryUserDetailsManager userDetailsService(){
+        UserDetails admin = User.withDefaultPasswordEncoder()
+                .username("admin")
+                .password("12345")
+                .authorities("admin")
+                .build();
+
+
+        UserDetails user = User.withDefaultPasswordEncoder()
+                .username("user")
+                .password("12345")
+                .authorities("read")
+                .build();
+
+
+        return  new InMemoryUserDetailsManager(admin,user);
+    }
 
 
 }
