@@ -38,4 +38,20 @@ public class ProjectSecurityConfig {
      *     }
      */
 
+    /** if i want to permit every request
+     * @Bean
+     *     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
+     *
+     *         http.authorizeHttpRequests(requests ->
+     *                         requests.anyRequest.permitAll()
+     *
+     *                         )
+     *                 .formLogin(Customizer.withDefaults())
+     *                 .httpBasic(Customizer.withDefaults());
+     *         return http.build();
+     *
+     *     }
+     */
+
+
 }
