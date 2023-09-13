@@ -34,10 +34,10 @@ public class ProjectSecurityConfig {
     }
 
 
-    @Bean
+/*    @Bean
     public JdbcUserDetailsManager userDetailsService(DataSource dataSource) {
         return new JdbcUserDetailsManager(dataSource);
-    }
+    }*/
 
 
 /*    @Bean
