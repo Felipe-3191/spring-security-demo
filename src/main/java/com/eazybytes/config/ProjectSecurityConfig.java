@@ -23,9 +23,11 @@ public class ProjectSecurityConfig {
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         //could use /myAccount/** to match every path inside myAccount
+        http.csrf(c -> c.disable());
         http.authorizeHttpRequests(requests ->
                         requests.requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards").authenticated()
-                                .requestMatchers("/notices", "/contact").permitAll()
+                                .requestMatchers("/notices", "/contact", "/register").permitAll()
+
                         )
                 .formLogin(Customizer.withDefaults())
                 .httpBasic(Customizer.withDefaults());
