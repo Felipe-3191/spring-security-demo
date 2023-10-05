@@ -89,4 +89,16 @@ public class Notice {
     public void setUpdateDt(Date updateDt) {
         this.updateDt = updateDt;
     }
+
+
+
+
+
+
+
+
+
+
+
+
 }
