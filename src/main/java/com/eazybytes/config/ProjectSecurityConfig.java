@@ -40,8 +40,11 @@ public class ProjectSecurityConfig {
                          return config;
                         }
                         )
-        );
-        http.authorizeHttpRequests(requests ->
+        ).csrf( custom -> {
+            //não é necessário oclocar o /notices pq apenas realizaremos get dele e o get não é protegido com csrf
+                custom.ignoringRequestMatchers("/contact", "/register");
+                })
+        .authorizeHttpRequests(requests ->
                         requests.requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards", "/user").authenticated()
                                 .requestMatchers("/notices","/contact","/register").permitAll()
                                  // o dispatcher error não era autorizado para usuários não logados, assim ele gerava um novo erro de unauthorized ()

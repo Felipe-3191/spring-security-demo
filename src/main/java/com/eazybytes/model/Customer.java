@@ -3,6 +3,8 @@ package com.eazybytes.model;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.sql.Date;
+
 @Entity
 public class Customer {
 
@@ -25,7 +27,7 @@ public class Customer {
     private String role;
 
     @Column(name = "create_dt")
-    private String createDt;
+    private Date createDt;
 
     public int getId() {
         return id;
@@ -75,11 +77,11 @@ public class Customer {
         this.role = role;
     }
 
-    public String getCreateDt() {
+    public Date getCreateDt() {
         return createDt;
     }
 
-    public void setCreateDt(String createDt) {
+    public void setCreateDt(Date createDt) {
         this.createDt = createDt;
     }
 }
