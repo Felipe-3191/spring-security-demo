@@ -1,12 +1,15 @@
 package com.eazybytes.config;
 
 
+import com.eazybytes.filter.CsrfCookieFilter;
 import jakarta.servlet.DispatcherType;
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.cglib.proxy.NoOp;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,6 +19,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.CsrfTokenRequestHandler;
 import org.springframework.web.cors.CorsConfiguration;
 
 import javax.sql.DataSource;
@@ -28,7 +35,12 @@ public class ProjectSecurityConfig {
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         //could use /myAccount/** to match every path inside myAccount
 
-        http.cors(cors ->
+        CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+        requestHandler.setCsrfRequestAttributeName("_csrf");
+
+        http.securityContext(context -> context.requireExplicitSave(false))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.ALWAYS))
+        .cors(cors ->
                 cors.configurationSource(
                         request -> {
                          CorsConfiguration config = new CorsConfiguration();
@@ -42,8 +54,11 @@ public class ProjectSecurityConfig {
                         )
         ).csrf( custom -> {
             //não é necessário oclocar o /notices pq apenas realizaremos get dele e o get não é protegido com csrf
-                custom.ignoringRequestMatchers("/contact", "/register");
+                custom.csrfTokenRequestHandler(requestHandler)
+                    .ignoringRequestMatchers("/contact", "/register")
+                        .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
                 })
+        .addFilterAfter(new CsrfCookieFilter(), BasicAuthenticationFilter.class)
         .authorizeHttpRequests(requests ->
                         requests.requestMatchers("/myAccount", "/myBalance", "/myLoans", "/myCards", "/user").authenticated()
                                 .requestMatchers("/notices","/contact","/register").permitAll()
